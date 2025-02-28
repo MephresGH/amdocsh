@@ -23,7 +23,7 @@ uninstall_amdocsh() {
 	sudo rm /etc/systemd/system/amdocsh.service
 	sudo rm /usr/bin/amdocshstart /usr/local/bin/amdocshreset
 	sensors
-	printf "\n%s\n\nThe script and its components have been removed. \
+	printf "\n%sThe script and its components have been removed. \
 	\nAny and all values executed via the script have been resetted.\n" "$gpu_information"
 	exit 0
 }
@@ -80,11 +80,9 @@ setup_amdocsh() {
 		setup_done=1
 		printf "GPU temperatures and conditions:\n\n%s \
 		\n\nSetting up systemd services and moving scripts to /usr/bin/.\n\n" "$(sensors)"
-		sudo cp "$scriptpath"/amdocshstart /usr/bin/
-		sudo cp "$scriptpath"/amdocshreset /usr/bin/
+		sudo cp "$scriptpath"/amdocsh{reset,start} /usr/bin/
 		sudo cp "$scriptpath"/amdocsh.service /etc/systemd/system/
-		sudo chmod 744 /usr/bin/amdocshstart
-		sudo chmod 744 /usr/bin/amdocshreset
+		sudo chmod 744 /usr/bin/amdocshstart /usr/bin/amdocshreset
 		sudo chmod 644 /etc/systemd/system/amdocsh.service
 		sudo systemctl daemon-reload
 		sudo systemctl start amdocsh.service
