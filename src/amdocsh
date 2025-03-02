@@ -10,7 +10,7 @@ clear_overclock() {
 }
 
 uninstall_amdocsh() {
-	if [ -f /etc/systemd/system/amdocsh.service ]; then
+	if [[ -f /etc/systemd/system/amdocsh.service ]]; then
 		sudo systemctl disable --now amdocsh.service
 		sudo systemctl daemon-reload
 	else
@@ -38,12 +38,12 @@ reset_overclock() {
 test_gpu() {
 	while :; do
 		case "$run_once" in
-		0 | "") if [ -f /usr/bin/gputest ]; then
+		0 | "") if [[ -f /usr/bin/gputest ]]; then
 			printf "\nRunning basic stress test. \
 				\nNOTE: Some users might need to run the stress test in fullscreen. \
 				\nPlease wait 10 minutes.\n"
 
-			if [ -f /usr/bin/mangohud ]; then
+			if [[ -f /usr/bin/mangohud ]]; then
 				printf "Running furmark with mangohud for 10 minutes.\n"
 				mangohud_config="fps_limit=0,font_size=15,full"
 			fi
@@ -52,7 +52,7 @@ test_gpu() {
 			$mangohud_config timeout 600s gputest /fullscreen /test=fur
 			run_once=1
 			return 0
-		elif [ ! -f /usr/bin/gputest ]; then
+		elif [[ ! -f /usr/bin/gputest ]]; then
 			printf "\nGPUTest isn't installed, aborting stress test."
 			return 1
 		fi ;;
@@ -116,10 +116,10 @@ setup_amdocsh() {
 		esac
 	done
 
-	if [ -n "$nostart_service" ]; then
+	if [[ -n "$nostart_service" ]]; then
 		printf "The service wasn't started. Please reboot your machine to finish the setup.\n"
 		exit 2
-	elif [ -n "$error" ]; then
+	elif [[ -n "$error" ]]; then
 		printf "An error has occurred in the setup process.\n"
 		exit 1
 	else
@@ -131,7 +131,7 @@ setup_amdocsh() {
 
 check_if_services_installed() {
 	clear
-	if [ -f /lib/systemd/system/amdocsh.service ]; then
+	if [[ -f /lib/systemd/system/amdocsh.service ]]; then
 		printf "Error: components already installed \
 		\nPlease run the uninstall segment of this script first to continue.\n"
 		exit 1
@@ -206,7 +206,7 @@ set_fan_speed() {
 		case "$fan" in
 		"skip" | "") break 2 ;;
 		*[a-zA-Z]*) printf "%s\n\n" "$error_msg" ;;
-		*) if [ -n "$fan" ]; then
+		*) if [[ -n "$fan" ]]; then
 			calc=$(printf "%.0f\n" "$(printf "%s*2.55\n" "$fan" | bc -l 2>/dev/null)")
 			if printf "1" | sudo tee "$cardnum"/device/hwmon/hwmon*/pwm1_enable >/dev/null &&
 				printf "%s\n" "$calc" | sudo tee "$cardnum"/device/hwmon/hwmon*/pwm1; then
@@ -224,7 +224,8 @@ clocks_and_voltage() {
 	while :; do
 		clear
 		printf "The following core/memory clock ranges, profiles and voltage values are available:\n%s\n\n" "$gpu_information"
-		printf "%sIMPORTANT NOTES: increasing the base clock speeds may cause crashes, graphical artifacts and could damage your hardware.%s\n\n" "$red" "$normal"
+		printf "%sIMPORTANT NOTES: \
+increasing the base clock speeds may cause crashes, graphical artifacts and could damage your hardware.%s\n\n" "$red" "$normal"
 		printf "%score, memory and voltage offset will be applied in this segment of the script in separate lines.%s\n\n" "$yellow" "$normal"
 		printf "Core (s)/memory (m), profile setting examples (0, 1,etc.) and frequency:\n%ss 1 1500\nm 1 1000%s\n\n" "$underline" "$normal"
 		printf "Voltage offset example:\n\n%svo -30\nvo +10%s\n\n" "$underline" "$normal"
@@ -333,7 +334,7 @@ run_overclock_setup() {
 
 check_if_amdocsh_installed() {
 	printf "\nChecking for local amdocsh files\n\n"
-	if [ -f "$scriptpath"/amdocshstart ] && [ -f "$scriptpath"/amdocshreset ]; then
+	if [[ -f "$scriptpath"/amdocshstart ]] && [[ -f "$scriptpath"/amdocshreset ]]; then
 		printf "Local amdocsh files were found.\n\n"
 		while read -rp "Do you want to install the local amdocsh files? (Y/N|[RETURN]) " yn; do
 			case "$yn" in
@@ -354,7 +355,7 @@ check_if_amdocsh_installed() {
 }
 
 find_gpu() {
-	[ -z "$cardnum" ] && printf "The following devices are available:\n" &&
+	[[ -z "$cardnum" ]] && printf "The following devices are available:\n" &&
 		find /sys/class/drm/card*
 	while read -rp "Which GPU do you want to target? ([INPUT]/[V]iew/[D]efault|[RETURN]) " num; do
 		case "$num" in
@@ -432,11 +433,11 @@ red=$(tput setaf 1)
 underline=$(tput smul)
 normal=$(tput sgr0)
 
-if [ -d /sys/module/amdgpu ]; then
+if [[ -d /sys/module/amdgpu ]]; then
 	case "$1" in
 	-i | --install)
 		cardnum=$(find /sys/class/drm/card"$2" | head -1)
-		if [ -d "$cardnum" ]; then
+		if [[ -d "$cardnum" ]]; then
 			check_if_amdocsh_installed
 		elif ! find /sys/class/drm/card*/device -type d >/dev/null; then
 			printf "Error: no GPU was found, exiting..."
@@ -450,7 +451,7 @@ if [ -d /sys/module/amdgpu ]; then
 	-r | --reset) reset_overclock ;;
 	-u | --uninstall)
 		cardnum=$(find /sys/class/drm/card"$2" | head -1)
-		if [ -d "$cardnum" ]; then
+		if [[ -d "$cardnum" ]]; then
 			uninstall_amdocsh
 		else
 			printf "Error: GPU number not found, using default value\n"
