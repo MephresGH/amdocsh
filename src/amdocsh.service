@@ -1,0 +1,18 @@
+[Unit]
+Description=AMDGPU Shell Overclock Utility
+After=multi-user.target
+StartLimitBurst=3
+StartLimitIntervalSec=3
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/amdocshstart
+ExecStop=/usr/local/bin/amdocshreset
+StandardOutput=file:/tmp/amdocsh.log
+StandardError=file:/tmp/amdocsh.log
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target
