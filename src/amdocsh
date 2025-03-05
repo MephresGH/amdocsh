@@ -24,7 +24,7 @@ uninstall_amdocsh() {
 	sudo rm /usr/local/bin/amdocshstart /usr/local/bin/amdocshreset
 	sensors
 	printf "\n%s\n\nThe script and its components have been removed. \
-	\nAny and all values executed via the script have been resetted.\n" "$(cat "$cardnum"/device/pp_od_clk_voltage)"
+	\nAny and all values executed via the script have been resetted.\n" "$gpu_information"
 	exit 0
 }
 
@@ -32,8 +32,7 @@ reset_overclock() {
 	clear
 	clear_overclock
 	sensors
-	cat "$cardnum"/device/pp_od_clk_voltage
-	printf "\n\nAll values performed by the overclock have been resetted.\n"
+	printf "\n%s\nAll values performed by the overclock have been resetted.\n" "$gpu_information"
 	exit 0
 }
 
@@ -153,7 +152,7 @@ set_power_profile() {
 		printf '\n\tdevdir=$(find %s/device | tail -n1)\n' "$cardnum"
 		printf '\thmondir=$(find %s/device/hwmon/hwmon* -type d | head -n1)\n' "$cardnum"
 	} >>"$scriptpath"/amdocshstart
-	printf "\nCurrent values:\n%s\n\n" "$(cat "$cardnum"/device/pp_od_clk_voltage)"
+	printf "\nCurrent values:\n%s\n\n" "$gpu_information"
 	printf "\nThe following performance profiles are available:\n\n%s\n\n" "$(cat "$cardnum"/device/pp_power_profile_mode)"
 	while read -rp "Enter a valid power profile or press enter/type 'skip': " power_prof; do
 		case "$power_prof" in
@@ -226,7 +225,7 @@ set_fan_speed() {
 clocks_and_voltage() {
 	while :; do
 		clear
-		printf "The following core/memory clock ranges, profiles and voltage values are available:\n%s\n\n" "$(cat "$cardnum"/device/pp_od_clk_voltage)"
+		printf "The following core/memory clock ranges, profiles and voltage values are available:\n%s\n\n" "$gpu_information"
 		printf "%sIMPORTANT NOTES: increasing the base clock speeds may cause crashes, graphical artifacts and could damage your hardware.%s\n\n" "$red" "$normal"
 		printf "%score, memory and voltage offset will be applied in this segment of the script in separate lines.%s\n\n" "$yellow" "$normal"
 		printf "Core (s)/memory (m), profile setting examples (0, 1,etc.) and frequency:\n%ss 1 1500\nm 1 1000%s\n\n" "$underline" "$normal"
@@ -321,6 +320,8 @@ create_reset_script() {
 }
 
 run_overclock_setup() {
+	gpu_information="$(cat "$cardnum"/device/pp_od_clk_voltage)"
+
 	check_if_services_installed
 	set_power_profile
 	set_power_draw
@@ -426,8 +427,12 @@ setup_menu() {
 }
 
 error_msg="Error: input invalid or empty"
-script=$(realpath "$0") scriptpath=$(dirname "$script")
-yellow=$(tput setaf 3) red=$(tput setaf 1) underline=$(tput smul) normal=$(tput sgr0)
+script=$(realpath "$0")
+scriptpath=$(dirname "$script")
+yellow=$(tput setaf 3)
+red=$(tput setaf 1)
+underline=$(tput smul)
+normal=$(tput sgr0)
 
 if [ -d /sys/module/amdgpu ]; then
 	case "$1" in
