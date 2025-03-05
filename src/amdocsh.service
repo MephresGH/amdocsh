@@ -1,6 +1,7 @@
 [Unit]
 Description=AMDGPU Shell Overclock Utility
-After=multi-user.target
+After=multi-user.target rc-local.service systemd-user-sessions.service
+Wants=modprobe@amdgpu.service
 StartLimitBurst=3
 StartLimitIntervalSec=3
 
