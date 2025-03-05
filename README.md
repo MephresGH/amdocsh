@@ -19,6 +19,12 @@ AMDOCSH is currently capable of:
 - Resetting all amdgpu-related options to factory settings
 
 
+### INSTALLATION
+Installation can either be done automatically (via a systemd service), or manual installation
+so that amdocsh can be run after your desktop environment/window manager of choice.
+The latter approach will be much more complicated, though.
+
+
 ### DEPENDENCIES
 The following pieces of software are required to run AMDOCSH:
 
