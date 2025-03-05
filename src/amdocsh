@@ -11,8 +11,7 @@ clear_overclock() {
 
 uninstall_amdocsh() {
 	if [ -f /etc/systemd/system/amdocsh.service ]; then
-		sudo systemctl stop amdocsh.service
-		sudo systemctl disable amdocsh.service
+		sudo systemctl disable --now amdocsh.service
 		sudo systemctl daemon-reload
 	else
 		printf "Error: no service file has been found, resetting settings now\n"
@@ -104,7 +103,7 @@ setup_amdocsh() {
 		case "$ste" in
 		[Ss])
 			printf "\nStarting service.\n\n"
-			sudo systemctl start amdocsh.service && sudo systemctl enable amdocsh.service || error=1
+			sudo systemctl start amdocsh.service && sudo systemctl enable --now amdocsh.service || error=1
 			break
 			;;
 		[Tt]) test_gpu ;;
