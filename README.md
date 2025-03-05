@@ -18,6 +18,7 @@ AMDOCSH is currently capable of:
 - Setting of custom fan speeds
 - Resetting all amdgpu-related options to factory settings
 
+
 ### DEPENDENCIES
 The following pieces of software are required to run AMDOCSH:
 
