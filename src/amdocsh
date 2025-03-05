@@ -18,10 +18,10 @@ uninstall_amdocsh() {
 		printf "Error: no service file has been found, resetting settings now\n"
 	fi
 
-	printf "Removing all systemd services and /usr/local/bin/ entries.\n\n"
+	printf "Removing all systemd services and /usr/bin/ entries.\n\n"
 	clear_overclock
 	sudo rm /etc/systemd/system/amdocsh.service
-	sudo rm /usr/local/bin/amdocshstart /usr/local/bin/amdocshreset
+	sudo rm /usr/bin/amdocshstart /usr/local/bin/amdocshreset
 	sensors
 	printf "\n%s\n\nThe script and its components have been removed. \
 	\nAny and all values executed via the script have been resetted.\n" "$gpu_information"
@@ -43,13 +43,14 @@ test_gpu() {
 			printf "\nRunning basic stress test. \
 				\nNOTE: Some users might need to run the stress test in fullscreen. \
 				\nPlease wait 10 minutes.\n"
+
 			if [ -f /usr/bin/mangohud ]; then
 				printf "Running furmark with mangohud for 10 minutes.\n"
-				mangohud_config="fps_limit=0,font_size=15,full" timeout 600s mangohud gputest /fullscreen /test=fur
-			else
-				printf "Running furmark for 10 minutes.\n"
-				timeout 600s gputest /fullscreen /test=fur
+				mangohud_config="fps_limit=0,font_size=15,full"
 			fi
+
+			printf "Running furmark for 10 minutes.\n"
+			$mangohud_config timeout 600s gputest /fullscreen /test=fur
 			run_once=1
 			return 0
 		elif [ ! -f /usr/bin/gputest ]; then
@@ -78,12 +79,12 @@ setup_amdocsh() {
 	0 | "")
 		setup_done=1
 		printf "GPU temperatures and conditions:\n\n%s \
-		\n\nSetting up systemd services and moving scripts to /usr/local/bin/.\n\n" "$(sensors)"
-		sudo cp "$scriptpath"/amdocshstart /usr/local/bin/
-		sudo cp "$scriptpath"/amdocshreset /usr/local/bin/
+		\n\nSetting up systemd services and moving scripts to /usr/bin/.\n\n" "$(sensors)"
+		sudo cp "$scriptpath"/amdocshstart /usr/bin/
+		sudo cp "$scriptpath"/amdocshreset /usr/bin/
 		sudo cp "$scriptpath"/amdocsh.service /etc/systemd/system/
-		sudo chmod 744 /usr/local/bin/amdocshstart
-		sudo chmod 744 /usr/local/bin/amdocshreset
+		sudo chmod 744 /usr/bin/amdocshstart
+		sudo chmod 744 /usr/bin/amdocshreset
 		sudo chmod 644 /etc/systemd/system/amdocsh.service
 		sudo systemctl daemon-reload
 		sudo systemctl start amdocsh.service
