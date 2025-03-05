@@ -1,13 +1,13 @@
 [Unit]
 Description=AMDGPU Shell Overclock Utility
-After=multi-user.target rc-local.service systemd-user-sessions.service
+After=multi-user.target rc-local.service systemd-user-sessions.service graphical.target
 Wants=modprobe@amdgpu.service
 StartLimitBurst=3
 StartLimitIntervalSec=3
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/amdocshstart
+ExecStart=/usr/bin/bash -c 'until [ "$DISPLAY" ]; do sleep 1; done' && /usr/bin/amdocshstart
 ExecStop=/usr/bin/amdocshreset
 StandardOutput=file:/tmp/amdocsh.log
 StandardError=file:/tmp/amdocsh.log
