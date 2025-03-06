@@ -146,7 +146,8 @@ check_if_services_installed() {
 set_power_profile() {
 	clear
 	{
-		printf "#!/bin/sh\nset -vex\n\nif find %s/ -type d; then" "$cardnum"
+		printf '#!/bin/sh\nset -vex\n\nif [ ! "${EUID:-$(id -u)}" -eq 0 ]; then\n\techo "Error: script is not run as root"\n\texit 3\nfi\n'
+		printf '\nif find %s -type d; then' "$cardnum"
 		printf '\n\tdevdir=$(find %s/device | tail -n1)\n' "$cardnum"
 		printf '\thmondir=$(find %s/device/hwmon/hwmon* -type d | head -n1)\n' "$cardnum"
 	} >>"$scriptpath"/amdocshstart
@@ -308,7 +309,8 @@ memory_profile() {
 
 create_reset_script() {
 	{
-		printf "#!/bin/sh\nset -vex\n\nif find %s/ -type d; then" "$cardnum"
+		printf '#!/bin/sh\nset -vex\n\nif [ ! "${EUID:-$(id -u)}" -eq 0 ]; then\n\techo "Error: script is not run as root"\n\texit 3\nfi\n'
+		printf "\nif find %s/ -type d; then" "$cardnum"
 		printf '\n\tdevdir=$(find %s/device | tail -n1)' "$cardnum"
 		printf '\n\thmondir=$(find %s/device/hwmon/hwmon* -type d | head -n1)' "$cardnum"
 		printf '\n\techo "auto" >"%s"/power_dpm_force_performance_level' '$devdir'
