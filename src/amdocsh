@@ -155,7 +155,10 @@ set_power_profile() {
 	printf "\nThe following performance profiles are available:\n\n%s\n\n" "$(cat "$cardnum"/device/pp_power_profile_mode)"
 	while read -rp "Enter a valid power profile or press enter/type 'skip': " power_prof; do
 		case "$power_prof" in
-		"skip" | "") break ;;
+		"skip" | "")
+			skip_power_profiles=1
+			break
+			;;
 		*)
 			if printf 'manual' | sudo tee "$cardnum"/device/power_dpm_force_performance_level &&
 				printf "%s\n" "$power_prof" | sudo tee "$cardnum"/device/pp_power_profile_mode; then
@@ -260,50 +263,59 @@ increasing the base clock speeds may cause crashes, graphical artifacts and coul
 
 core_profile() {
 	clear
-	while read -rp "Do you want to apply a persistent GPU core profile? (Y/N|[RETURN]) " yn; do
-		case "$yn" in
-		[Yy])
-			printf "\nProceeding\n\nThe following core profiles are available:\n%s\n" "$(cat "$cardnum"/device/pp_dpm_sclk)"
-			while read -rp "Enter a valid core profile or press enter/type 'skip': " coreprof; do
-				case "$coreprof" in
-				"skip" | "") break 2 ;;
-				*) if printf "%s" "$coreprof" | sudo tee "$cardnum"/device/pp_dpm_sclk; then
-					printf '\techo "%s" >"%s"/pp_dpm_sclk\n' "$coreprof" '$devdir' >>"$scriptpath"/amdocshstart
-					break 2
-				else
-					printf "%s\n\n" "$error_msg"
-				fi ;;
-				esac
-			done
-			;;
-		[Nn] | "") break ;;
-		*) printf "%s\n\n" "$error_msg" ;;
-		esac
-	done
+	if [[ -z "$skip_power_profiles" ]]; then
+		while read -rp "Do you want to apply a persistent GPU core profile? (Y/N|[RETURN]) " yn; do
+			case "$yn" in
+			[Yy])
+				printf "\nProceeding\n\nThe following core profiles are available:\n%s\n" "$(cat "$cardnum"/device/pp_dpm_sclk)"
+				while read -rp "Enter a valid core profile or press enter/type 'skip': " coreprof; do
+					case "$coreprof" in
+					"skip" | "") break 2 ;;
+					*) if printf "%s" "$coreprof" | sudo tee "$cardnum"/device/pp_dpm_sclk; then
+						printf '\techo "%s" >"%s"/pp_dpm_sclk\n' "$coreprof" '$devdir' >>"$scriptpath"/amdocshstart
+						break 2
+					else
+						printf "%s\n\n" "$error_msg"
+					fi ;;
+					esac
+				done
+				;;
+			[Nn] | "") break ;;
+			*) printf "%s\n\n" "$error_msg" ;;
+			esac
+		done
+	else
+		printf "Skipping...\n"
+	fi
 }
 
 memory_profile() {
 	clear
-	while read -rp "Do you want to apply a persistent GPU memory profile? (Y/N|[RETURN]) " yn; do
-		case "$yn" in
-		[Yy])
-			printf "\nProceeding\n\nThe following memory profiles are available:\n%s\n" "$(cat "$cardnum"/device/pp_dpm_mclk)"
-			while read -rp "Enter a valid memory profile or press enter/type 'skip': " memprof; do
-				case "$memprof" in
-				"skip" | "") break 2 ;;
-				*) if printf "%s" "$memprof" | sudo tee "$cardnum"/device/pp_dpm_mclk; then
-					printf '\techo "%s" >"%s"/pp_dpm_mclk\n' "$memprof" '$devdir' >>"$scriptpath"/amdocshstart
-					break 2
-				else
-					printf "%s\n\n" "$error_msg"
-				fi ;;
-				esac
-			done
-			;;
-		[Nn] | "") break 2 ;;
-		*) printf "%s\n\n" "$error_msg" ;;
-		esac
-	done
+	if [[ -z "$skip_power_profiles" ]]; then
+		while read -rp "Do you want to apply a persistent GPU memory profile? (Y/N|[RETURN]) " yn; do
+			case "$yn" in
+			[Yy])
+				printf "\nProceeding\n\nThe following memory profiles are available:\n%s\n" "$(cat "$cardnum"/device/pp_dpm_mclk)"
+				while read -rp "Enter a valid memory profile or press enter/type 'skip': " memprof; do
+					case "$memprof" in
+					"skip" | "") break 2 ;;
+					*) if printf "%s" "$memprof" | sudo tee "$cardnum"/device/pp_dpm_mclk; then
+						printf '\techo "%s" >"%s"/pp_dpm_mclk\n' "$memprof" '$devdir' >>"$scriptpath"/amdocshstart
+						break 2
+					else
+						printf "%s\n\n" "$error_msg"
+					fi ;;
+					esac
+				done
+				;;
+			[Nn] | "") break 2 ;;
+			*) printf "%s\n\n" "$error_msg" ;;
+			esac
+		done
+	else
+		printf "Skipping...\n"
+	fi
+
 	printf '\techo "c" >"%s"/pp_od_clk_voltage\nelse\n\texit 1\nfi' '$devdir' >>"$scriptpath"/amdocshstart
 }
 
