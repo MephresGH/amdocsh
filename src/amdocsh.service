@@ -12,7 +12,6 @@ ExecStart=/usr/bin/amdocshstart
 ExecStop=/usr/bin/amdocshreset
 StandardOutput=file:/tmp/amdocsh.log
 StandardError=file:/tmp/amdocsh.log
-RemainAfterExit=yes
 Restart=on-failure
 RestartSec=3s
 
