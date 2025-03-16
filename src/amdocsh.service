@@ -7,11 +7,13 @@ StartLimitBurst=3
 StartLimitIntervalSec=3
 
 [Service]
-Type=simple
+Type=oneshot
+ExecStart=/usr/bin/amdocshstart
 ExecStart=/usr/bin/amdocshstart
 ExecStop=/usr/bin/amdocshreset
 StandardOutput=file:/tmp/amdocsh.log
 StandardError=file:/tmp/amdocsh.log
+RemainAfterExit=true
 Restart=on-failure
 RestartSec=3s
 
