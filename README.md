@@ -50,8 +50,12 @@ https://www.kernel.org/doc/html/v4.20/gpu/amdgpu.html
 ### NOTE OF INTEREST
 KMS is highly recommended for AMDOCSH to function.
 Having KMS disabled can result in the script exiting to avoid writing into the user's root directory.
+As of currently, running amdocsh's start script does not set a static VRAM clock speed and other parameters
+for some cards when running it once, thus causing flickering and potential crashes under certain loads.
+A temporary solution here is running the start script multiple times in a row
+(2 times seems to work), be it manually or via a basic for loop.
 Finally: this software does not come with any warranty, safety measures or any other form of protection.
 I provide access to all of these options as-is for personal use.
 I do not take any responsibility for any hardware-related issues you might cause with this script.
 For more information, see the applied license.
-Basic debug information can also be found in /tmp/amdocsh.log.
+Basic debug information can also be found in /tmp/amdocsh.log when using the systemd startup service.
