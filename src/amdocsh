@@ -84,7 +84,7 @@ setup_amdocsh() {
 		sudo chmod 744 /usr/bin/amdocshstart /usr/bin/amdocshreset
 		sudo chmod 644 /etc/systemd/system/amdocsh.service
 		sudo systemctl daemon-reload
-		sudo systemctl start amdocsh.service
+		sudo systemctl enable --now amdocsh.service
 		while read -rp "Do you want to view the contents of the scripts? (Y/N|[RETURN]) " yn; do
 			case "$yn" in
 			[Yy])
@@ -103,7 +103,7 @@ setup_amdocsh() {
 		case "$ste" in
 		[Ss])
 			printf "\nStarting service.\n\n"
-			sudo systemctl start amdocsh.service && sudo systemctl enable --now amdocsh.service || error=1
+			sudo systemctl enable --now amdocsh.service || error=1
 			break
 			;;
 		[Tt]) test_gpu ;;
