@@ -1,14 +1,13 @@
 [Unit]
 Description=AMDGPU Shell Overclock Utility
 Requires=modprobe@amdgpu.service
-After=default.target modprobe@amdgpu.service
-Wants=modprobe@amdgpu.service
+After=modprobe@amdgpu.service
 StartLimitBurst=3
 StartLimitIntervalSec=3
 
 [Service]
-Type=oneshot
-ExecStart=/usr/bin/amdocshstart
+Type=simple
+ExecStartPre=/usr/bin/amdocshstart
 ExecStart=/usr/bin/amdocshstart
 ExecStop=/usr/bin/amdocshreset
 StandardOutput=file:/tmp/amdocsh.log

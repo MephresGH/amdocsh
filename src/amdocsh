@@ -84,7 +84,7 @@ setup_amdocsh() {
 		sudo chmod 744 /usr/bin/amdocshstart /usr/bin/amdocshreset
 		sudo chmod 644 /etc/systemd/system/amdocsh.service
 		sudo systemctl daemon-reload
-		sudo systemctl enable --now amdocsh.service
+		sudo systemctl start amdocsh.service
 		while read -rp "Do you want to view the contents of the scripts? (Y/N|[RETURN]) " yn; do
 			case "$yn" in
 			[Yy])
