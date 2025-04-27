@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+## amdocsh - AMDGPU Overclocking Script
+## Licensed under GPL-3.0
 
 # shellcheck disable=SC2016
 
