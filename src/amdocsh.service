@@ -2,8 +2,6 @@
 Description=AMDGPU Shell Overclock Utility
 Requires=modprobe@amdgpu.service
 After=modprobe@amdgpu.service
-StartLimitBurst=3
-StartLimitIntervalSec=3
 
 [Service]
 Type=simple
@@ -13,8 +11,6 @@ ExecStop=/usr/bin/amdocshreset
 StandardOutput=file:/tmp/amdocsh.log
 StandardError=file:/tmp/amdocsh.log
 RemainAfterExit=true
-Restart=on-failure
-RestartSec=3s
 
 [Install]
 WantedBy=multi-user.target
